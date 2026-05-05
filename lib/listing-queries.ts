@@ -60,6 +60,7 @@ function searchMockListings(filters: ListingFilters) {
     })
     .filter(
       (listing) =>
+        filters.category !== "Latest Jobs" ||
         listing.salary_min <= filters.salary[1] &&
         listing.salary_max >= filters.salary[0],
     )
@@ -86,11 +87,15 @@ export async function fetchListings(filters: ListingFilters) {
     .select("*")
     .eq("is_published", true)
     .eq("category", filters.category)
-    .lte("salary_min", filters.salary[1])
-    .gte("salary_max", filters.salary[0])
     .lte("bps_min", filters.bps[1])
     .gte("bps_max", filters.bps[0])
     .order("apply_deadline", { ascending: true });
+
+  if (filters.category === "Latest Jobs") {
+    query = query
+      .lte("salary_min", filters.salary[1])
+      .gte("salary_max", filters.salary[0]);
+  }
 
   if (filters.search.trim()) {
     const term = filters.search.trim().replaceAll(",", " ");

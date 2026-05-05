@@ -99,6 +99,8 @@ export function ListingsEngine({ search }: { search: string }) {
                   setFilters((current) => ({
                     ...current,
                     category: tab as ListingCategory,
+                    salary:
+                      tab === "Latest Jobs" ? current.salary : defaultFilters.salary,
                   }))
                 }
                 className="relative rounded-full px-4 py-2.5 text-sm font-semibold text-emerald-900/65 transition dark:text-white/65"
@@ -224,15 +226,21 @@ function FilterSidebar({
         </button>
       </div>
 
-      <RangeFilter
-        label="Salary range"
-        prefix="PKR "
-        min={0}
-        max={450000}
-        step={5000}
-        value={filters.salary}
-        onChange={(salary) => setFilters((current) => ({ ...current, salary }))}
-      />
+      {filters.category === "Latest Jobs" ? (
+        <RangeFilter
+          label="Salary range"
+          prefix="PKR "
+          min={0}
+          max={450000}
+          step={5000}
+          value={filters.salary}
+          onChange={(salary) => setFilters((current) => ({ ...current, salary }))}
+        />
+      ) : (
+        <div className="mt-6 rounded-2xl bg-emerald-50 p-4 text-sm text-emerald-900/65 dark:bg-white/10 dark:text-white/65">
+          Salary filter is paused for schemes and results.
+        </div>
+      )}
 
       <RangeFilter
         label="BPS scale"

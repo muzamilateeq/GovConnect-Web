@@ -15,12 +15,14 @@ import {
   Search,
   Sun,
 } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { ListingsEngine } from "./listings-engine";
 
 const navItems = [
   {
     label: "Services",
+    href: "/#listings",
     columns: [
       ["Citizen Services", "Domicile", "Driving License", "Land Records"],
       ["Business", "Tax Portal", "Registrations", "Permits"],
@@ -29,6 +31,7 @@ const navItems = [
   },
   {
     label: "Jobs",
+    href: "/jobs",
     columns: [
       ["Recruitment", "PPSC Jobs", "Police Jobs", "Teaching Posts"],
       ["Support", "Eligibility", "Syllabus", "Interview Schedule"],
@@ -37,6 +40,7 @@ const navItems = [
   },
   {
     label: "Schemes",
+    href: "/#listings",
     columns: [
       ["Welfare", "Health Card", "Subsidies", "Youth Finance"],
       ["Digital", "Laptop Scheme 2026", "E-Services", "Training"],
@@ -212,7 +216,7 @@ function Navbar({
     >
       <nav className="mx-auto max-w-7xl rounded-[1.75rem] border border-white/70 bg-white/75 px-4 py-3 shadow-xl shadow-emerald-950/8 backdrop-blur-2xl dark:border-white/10 dark:bg-[#061b12]/75 dark:shadow-black/30">
         <div className="flex items-center justify-between gap-4">
-          <a href="#" className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3">
             <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-800 text-white shadow-lg shadow-emerald-900/20">
               <Landmark className="h-6 w-6" />
             </span>
@@ -224,25 +228,26 @@ function Navbar({
                 Public Services Portal
               </span>
             </span>
-          </a>
+          </Link>
 
           <div className="hidden items-center gap-1 lg:flex">
             {navItems.map((item) => (
-              <button
+              <Link
                 key={item.label}
+                href={item.href}
                 onMouseEnter={() => setMegaOpen(item.label)}
                 className="flex items-center gap-1 rounded-full px-4 py-2 text-sm font-semibold text-emerald-900/70 transition hover:bg-emerald-50 hover:text-emerald-950 dark:text-white/70 dark:hover:bg-white/10 dark:hover:text-white"
               >
                 {item.label}
                 <ChevronDown className="h-4 w-4" />
-              </button>
+              </Link>
             ))}
-            <a
-              href="#"
+            <Link
+              href="/dashboard"
               className="rounded-full px-4 py-2 text-sm font-semibold text-emerald-900/70 transition hover:bg-emerald-50 hover:text-emerald-950 dark:text-white/70 dark:hover:bg-white/10 dark:hover:text-white"
             >
               Track Application
-            </a>
+            </Link>
           </div>
 
           <div className="flex items-center gap-2">
@@ -253,12 +258,12 @@ function Navbar({
             >
               {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </button>
-            <a
-              href="#"
+            <Link
+              href="/dashboard"
               className="hidden rounded-full bg-emerald-800 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20 transition hover:bg-emerald-900 sm:inline-flex"
             >
               Citizen Login
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -280,13 +285,17 @@ function Navbar({
                       </h3>
                       <div className="mt-3 space-y-2">
                         {column.slice(1).map((link) => (
-                          <a
+                          <Link
                             key={link}
-                            href="#"
+                            href={
+                              megaOpen === "Jobs"
+                                ? `/jobs?search=${encodeURIComponent(link)}`
+                                : `/#listings`
+                            }
                             className="block rounded-2xl px-3 py-2 text-sm font-medium text-emerald-900/65 transition hover:bg-emerald-50 hover:text-emerald-950 dark:text-white/65 dark:hover:bg-white/10 dark:hover:text-white"
                           >
                             {link}
-                          </a>
+                          </Link>
                         ))}
                       </div>
                     </div>

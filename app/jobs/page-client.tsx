@@ -1,11 +1,13 @@
 "use client";
 
 import { Search } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { ListingsEngine } from "@/app/listings-engine";
 
 export function JobsPageClient() {
-  const [search, setSearch] = useState("");
+  const searchParams = useSearchParams();
+  const [search, setSearch] = useState(searchParams.get("search") ?? "");
 
   return (
     <main className="min-h-screen bg-[#f8fbf8] text-emerald-950 dark:bg-[#03140d] dark:text-white">
