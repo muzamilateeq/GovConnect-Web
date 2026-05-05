@@ -20,8 +20,8 @@ import {
   categoryNames,
   defaultFilters,
   type DeadlineFilter,
+  type FilterCategory,
   type Listing,
-  type ListingCategory,
   type ListingFilters,
   provinces,
 } from "@/lib/listings";
@@ -98,7 +98,7 @@ export function ListingsEngine({ search }: { search: string }) {
                 onClick={() =>
                   setFilters((current) => ({
                     ...current,
-                    category: tab as ListingCategory,
+                    category: tab as FilterCategory,
                     salary:
                       tab === "Latest Jobs" ? current.salary : defaultFilters.salary,
                   }))
@@ -171,7 +171,8 @@ export function ListingsEngine({ search }: { search: string }) {
               <div className="rounded-[1.75rem] border border-emerald-900/10 bg-white/75 p-8 text-center shadow-xl shadow-emerald-950/7 backdrop-blur-xl dark:border-white/10 dark:bg-white/10">
                 <h3 className="text-xl font-semibold">No listings found</h3>
                 <p className="mt-2 text-sm text-emerald-900/65 dark:text-white/65">
-                  Try widening the salary, scale, province, or deadline filters.
+                  Try widening filters, or run the scraper so official government
+                  jobs and schemes are imported into Supabase.
                 </p>
               </div>
             )}
@@ -238,7 +239,7 @@ function FilterSidebar({
         />
       ) : (
         <div className="mt-6 rounded-2xl bg-emerald-50 p-4 text-sm text-emerald-900/65 dark:bg-white/10 dark:text-white/65">
-          Salary filter is paused for schemes and results.
+          Salary filter is paused for all/schemes/results searches.
         </div>
       )}
 

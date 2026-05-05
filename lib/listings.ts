@@ -1,4 +1,5 @@
 export type ListingCategory = "Latest Jobs" | "New Schemes" | "Recent Results";
+export type FilterCategory = "All" | ListingCategory;
 
 export type DeadlineFilter = "all" | "today" | "week";
 
@@ -31,7 +32,7 @@ export type Listing = {
 
 export type ListingFilters = {
   search: string;
-  category: ListingCategory;
+  category: FilterCategory;
   salary: [number, number];
   bps: [number, number];
   provinces: string[];
@@ -46,7 +47,8 @@ export const provinces = [
   "Islamabad",
 ];
 
-export const categoryNames: ListingCategory[] = [
+export const categoryNames: FilterCategory[] = [
+  "All",
   "Latest Jobs",
   "New Schemes",
   "Recent Results",
@@ -54,7 +56,7 @@ export const categoryNames: ListingCategory[] = [
 
 export const defaultFilters: ListingFilters = {
   search: "",
-  category: "Latest Jobs",
+  category: "All",
   salary: [0, 450000],
   bps: [1, 22],
   provinces: [],

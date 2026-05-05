@@ -78,6 +78,13 @@ export function PortalHome() {
     );
   }, [search]);
 
+  function showResults() {
+    document.getElementById("listings")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
+
   return (
     <main className="min-h-screen overflow-hidden bg-[#f8fbf8] text-emerald-950 transition-colors duration-300 dark:bg-[#03140d] dark:text-white">
       <Navbar
@@ -123,7 +130,10 @@ export function PortalHome() {
                   placeholder="Search jobs, schemes, results, certificates..."
                   className="h-14 min-w-0 flex-1 bg-transparent text-base font-medium outline-none placeholder:text-emerald-900/45 dark:placeholder:text-white/45"
                 />
-                <button className="inline-flex h-12 shrink-0 items-center gap-2 rounded-full bg-emerald-700 px-5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20 transition hover:bg-emerald-800">
+                <button
+                  onClick={showResults}
+                  className="inline-flex h-12 shrink-0 items-center gap-2 rounded-full bg-emerald-700 px-5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20 transition hover:bg-emerald-800"
+                >
                   Search
                   <ArrowRight className="h-4 w-4" />
                 </button>
@@ -137,7 +147,10 @@ export function PortalHome() {
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -8 }}
-                      onClick={() => setSearch(item)}
+                      onClick={() => {
+                        setSearch(item);
+                        showResults();
+                      }}
                       className="rounded-full border border-emerald-700/10 bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-800 transition hover:border-emerald-700/30 dark:border-white/10 dark:bg-white/10 dark:text-emerald-50"
                     >
                       {item}

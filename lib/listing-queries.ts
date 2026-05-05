@@ -41,7 +41,10 @@ function searchMockListings(filters: ListingFilters) {
 
   return mockListings
     .filter((listing) => listing.is_published)
-    .filter((listing) => listing.category === filters.category)
+    .filter(
+      (listing) =>
+        filters.category === "All" || listing.category === filters.category,
+    )
     .filter((listing) => {
       if (!term) return true;
 
@@ -86,10 +89,13 @@ export async function fetchListings(filters: ListingFilters) {
     .from("listings")
     .select("*")
     .eq("is_published", true)
-    .eq("category", filters.category)
     .lte("bps_min", filters.bps[1])
     .gte("bps_max", filters.bps[0])
     .order("apply_deadline", { ascending: true });
+
+  if (filters.category !== "All") {
+    query = query.eq("category", filters.category);
+  }
 
   if (filters.category === "Latest Jobs") {
     query = query

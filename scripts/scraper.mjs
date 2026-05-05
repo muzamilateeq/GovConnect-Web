@@ -1,8 +1,16 @@
 import { createHash } from "node:crypto";
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import * as cheerio from "cheerio";
 import admin from "firebase-admin";
 import { createClient } from "@supabase/supabase-js";
 import { SOURCE_CONFIGS, USER_AGENT } from "./scraper-config.mjs";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+loadLocalEnv();
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -19,6 +27,33 @@ const scraperOptions = {
     "cache-control": "no-cache",
   },
 };
+
+function loadLocalEnv() {
+  const envPath = path.join(__dirname, "..", ".env.local");
+  if (!existsSync(envPath)) return;
+
+  const envFile = readFileSync(envPath, "utf8");
+
+  envFile.split(/\r?\n/).forEach((line) => {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) return;
+
+    const equalsIndex = trimmed.indexOf("=");
+    if (equalsIndex === -1) return;
+
+    const key = trimmed.slice(0, equalsIndex).trim();
+    let value = trimmed.slice(equalsIndex + 1).trim();
+
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+
+    process.env[key] ??= value;
+  });
+}
 
 function requireEnv() {
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
@@ -441,7 +476,7 @@ export async function runScraper() {
   };
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (__filename === path.resolve(process.argv[1] ?? "")) {
   runScraper()
     .then((result) => {
       console.log(JSON.stringify(result, null, 2));
