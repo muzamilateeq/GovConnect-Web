@@ -11,17 +11,20 @@ import {
   Bell,
   ChevronDown,
   Landmark,
+  Menu,
   Search,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { menuSourceHref } from "@/lib/menu-sources";
 import { ListingsEngine } from "./listings-engine";
 import { ThemeToggle } from "./theme-toggle";
 
 const navItems = [
   {
     label: "Services",
-    href: listingHref("services", "All"),
+    href: menuSourceHref("E-Services"),
     columns: [
       ["Citizen Services", "Domicile", "Driving License", "Land Records"],
       ["Business", "Tax Portal", "Registrations", "Permits"],
@@ -30,7 +33,7 @@ const navItems = [
   },
   {
     label: "Jobs",
-    href: listingHref("jobs", "Latest Jobs"),
+    href: menuSourceHref("PPSC Jobs"),
     columns: [
       ["Recruitment", "PPSC Jobs", "Police Jobs", "Teaching Posts"],
       ["Support", "Eligibility", "Syllabus", "Interview Schedule"],
@@ -39,7 +42,7 @@ const navItems = [
   },
   {
     label: "Schemes",
-    href: listingHref("schemes", "New Schemes"),
+    href: menuSourceHref("Laptop Scheme 2026"),
     columns: [
       ["Welfare", "Health Card", "Subsidies", "Youth Finance"],
       ["Digital", "Laptop Scheme 2026", "E-Services", "Training"],
@@ -56,30 +59,9 @@ const popularSearches = [
   "Police Recruitment",
 ];
 
-function listingHref(search: string, category = "All") {
-  return `/jobs?search=${encodeURIComponent(search)}&category=${encodeURIComponent(
-    category,
-  )}`;
-}
-
-function categoryForMenu(label: string | null, link: string) {
-  if (["result", "merit", "selection"].some((term) => link.toLowerCase().includes(term))) {
-    return "Recent Results";
-  }
-  if (label === "Jobs" || link.toLowerCase().includes("job")) return "Latest Jobs";
-  if (
-    label === "Schemes" ||
-    ["scholarship", "scheme", "card", "subsid", "training", "solar"].some(
-      (term) => link.toLowerCase().includes(term),
-    )
-  ) {
-    return "New Schemes";
-  }
-  return "All";
-}
-
 export function PortalHome() {
   const [megaOpen, setMegaOpen] = useState<string | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [scrolled, setScrolled] = useState(false);
   const { scrollY } = useScroll();
@@ -105,11 +87,13 @@ export function PortalHome() {
     <main className="min-h-screen overflow-hidden bg-[#f8fbf8] text-emerald-950 transition-colors duration-300 dark:bg-[#03140d] dark:text-white">
       <Navbar
         megaOpen={megaOpen}
+        mobileOpen={mobileOpen}
         scrolled={scrolled}
         setMegaOpen={setMegaOpen}
+        setMobileOpen={setMobileOpen}
       />
 
-      <section className="relative isolate px-5 pt-32 pb-20 sm:px-8 lg:px-12">
+      <section className="relative isolate px-4 pt-28 pb-14 sm:px-8 sm:pt-32 sm:pb-20 lg:px-12">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,rgba(16,185,129,0.22),transparent_30%),linear-gradient(135deg,#f8fbf8_0%,#ffffff_46%,#e8f7ed_100%)] dark:bg-[radial-gradient(circle_at_20%_20%,rgba(16,185,129,0.18),transparent_30%),linear-gradient(135deg,#03140d_0%,#062817_48%,#0b3b24_100%)]" />
         <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
           <motion.div
@@ -121,10 +105,10 @@ export function PortalHome() {
               <Landmark className="h-4 w-4" />
               Unified Public Services Gateway
             </span>
-            <h1 className="mt-7 max-w-4xl text-5xl font-semibold tracking-normal text-emerald-950 sm:text-6xl lg:text-7xl dark:text-white">
+            <h1 className="mt-6 max-w-4xl text-4xl font-semibold tracking-normal text-emerald-950 sm:mt-7 sm:text-6xl lg:text-7xl dark:text-white">
               Government services, jobs, and schemes in one premium portal.
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-emerald-900/70 dark:text-emerald-50/75">
+            <p className="mt-5 max-w-2xl text-base leading-7 text-emerald-900/70 sm:mt-6 sm:text-lg sm:leading-8 dark:text-emerald-50/75">
               Discover verified opportunities, track applications, and access
               citizen services through a fast, secure, modern digital front
               desk.
@@ -135,18 +119,18 @@ export function PortalHome() {
               animate={{ y: [0, -4, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             >
-              <div className="flex items-center gap-3">
+              <div className="grid gap-3 sm:flex sm:items-center">
                 <Search className="ml-3 h-5 w-5 shrink-0 text-emerald-700 dark:text-emerald-200" />
                 <input
                   aria-label="Search portal"
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder="Search jobs, schemes, results, certificates..."
-                  className="h-14 min-w-0 flex-1 bg-transparent text-base font-medium outline-none placeholder:text-emerald-900/45 dark:placeholder:text-white/45"
+                  className="h-12 min-w-0 flex-1 bg-transparent px-3 text-base font-medium outline-none placeholder:text-emerald-900/45 sm:h-14 sm:px-0 dark:placeholder:text-white/45"
                 />
                 <button
                   onClick={showResults}
-                  className="inline-flex h-12 shrink-0 items-center gap-2 rounded-full bg-emerald-700 px-5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20 transition hover:bg-emerald-800"
+                  className="inline-flex h-12 w-full shrink-0 items-center justify-center gap-2 rounded-full bg-emerald-700 px-5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20 transition hover:bg-emerald-800 sm:w-auto"
                 >
                   Search
                   <ArrowRight className="h-4 w-4" />
@@ -181,7 +165,7 @@ export function PortalHome() {
             transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
             className="relative"
           >
-            <div className="rounded-[2rem] border border-white/70 bg-white/70 p-5 shadow-2xl shadow-emerald-950/15 backdrop-blur-2xl dark:border-white/10 dark:bg-white/10">
+            <div className="rounded-[2rem] border border-white/70 bg-white/70 p-3 shadow-2xl shadow-emerald-950/15 backdrop-blur-2xl sm:p-5 dark:border-white/10 dark:bg-white/10">
               <div className="rounded-[1.5rem] bg-emerald-950 p-6 text-white shadow-inner dark:bg-[#021008]">
                 <div className="flex items-center justify-between">
                   <div>
@@ -192,7 +176,7 @@ export function PortalHome() {
                   </div>
                   <Bell className="h-6 w-6 text-emerald-200" />
                 </div>
-                <div className="mt-8 grid grid-cols-2 gap-3">
+                <div className="mt-8 grid grid-cols-2 gap-2 sm:gap-3">
                   {[
                     ["42K+", "Applications"],
                     ["186", "Active Jobs"],
@@ -201,9 +185,9 @@ export function PortalHome() {
                   ].map(([value, label]) => (
                     <div
                       key={label}
-                      className="rounded-3xl border border-white/10 bg-white/10 p-4"
+                      className="rounded-3xl border border-white/10 bg-white/10 p-3 sm:p-4"
                     >
-                      <p className="text-3xl font-semibold">{value}</p>
+                      <p className="text-2xl font-semibold sm:text-3xl">{value}</p>
                       <p className="mt-1 text-sm text-emerald-100/70">
                         {label}
                       </p>
@@ -223,12 +207,16 @@ export function PortalHome() {
 
 function Navbar({
   megaOpen,
+  mobileOpen,
   scrolled,
   setMegaOpen,
+  setMobileOpen,
 }: {
   megaOpen: string | null;
+  mobileOpen: boolean;
   scrolled: boolean;
   setMegaOpen: (value: string | null) => void;
+  setMobileOpen: (value: boolean) => void;
 }) {
   return (
     <header
@@ -237,17 +225,17 @@ function Navbar({
       }`}
       onMouseLeave={() => setMegaOpen(null)}
     >
-      <nav className="mx-auto max-w-7xl rounded-[1.75rem] border border-white/70 bg-white/75 px-4 py-3 shadow-xl shadow-emerald-950/8 backdrop-blur-2xl dark:border-white/10 dark:bg-[#061b12]/75 dark:shadow-black/30">
+      <nav className="mx-auto max-w-7xl rounded-[1.5rem] border border-white/70 bg-white/85 px-3 py-3 shadow-xl shadow-emerald-950/8 backdrop-blur-2xl sm:rounded-[1.75rem] sm:px-4 dark:border-white/10 dark:bg-[#061b12]/85 dark:shadow-black/30">
         <div className="flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-800 text-white shadow-lg shadow-emerald-900/20">
-              <Landmark className="h-6 w-6" />
+            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-800 text-white shadow-lg shadow-emerald-900/20 sm:h-11 sm:w-11">
+              <Landmark className="h-5 w-5 sm:h-6 sm:w-6" />
             </span>
-            <span>
+            <span className="min-w-0">
               <span className="block text-lg font-semibold leading-5">
                 GovConnect
               </span>
-              <span className="text-xs font-medium text-emerald-900/55 dark:text-white/55">
+              <span className="hidden text-xs font-medium text-emerald-900/55 sm:block dark:text-white/55">
                 Public Services Portal
               </span>
             </span>
@@ -281,6 +269,14 @@ function Navbar({
             >
               Citizen Login
             </Link>
+            <button
+              type="button"
+              aria-label="Open menu"
+              onClick={() => setMobileOpen(true)}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-emerald-900/10 bg-white/70 text-emerald-800 shadow-sm lg:hidden dark:border-white/10 dark:bg-white/10 dark:text-emerald-100"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
           </div>
         </div>
 
@@ -304,7 +300,7 @@ function Navbar({
                         {column.slice(1).map((link) => (
                           <Link
                             key={link}
-                            href={listingHref(link, categoryForMenu(megaOpen, link))}
+                            href={menuSourceHref(link)}
                             className="block rounded-2xl px-3 py-2 text-sm font-medium text-emerald-900/65 transition hover:bg-emerald-50 hover:text-emerald-950 dark:text-white/65 dark:hover:bg-white/10 dark:hover:text-white"
                           >
                             {link}
@@ -314,6 +310,71 @@ function Navbar({
                     </div>
                   ))}
               </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {mobileOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 bg-emerald-950/35 p-4 backdrop-blur-sm lg:hidden"
+              onClick={() => setMobileOpen(false)}
+            >
+              <motion.div
+                initial={{ y: -16, scale: 0.98 }}
+                animate={{ y: 0, scale: 1 }}
+                exit={{ y: -16, scale: 0.98 }}
+                className="max-h-[calc(100vh-2rem)] overflow-y-auto rounded-[1.5rem] border border-white/70 bg-white p-4 shadow-2xl dark:border-white/10 dark:bg-[#061b12]"
+                onClick={(event) => event.stopPropagation()}
+              >
+                <div className="mb-4 flex items-center justify-between">
+                  <p className="font-semibold">Menu</p>
+                  <button
+                    type="button"
+                    aria-label="Close menu"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-800 dark:bg-white/10 dark:text-white"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+                <div className="space-y-5">
+                  {navItems.map((item) => (
+                    <div key={item.label}>
+                      <Link
+                        href={item.href}
+                        onClick={() => setMobileOpen(false)}
+                        className="block rounded-2xl bg-emerald-50 px-4 py-3 font-semibold text-emerald-900 dark:bg-white/10 dark:text-white"
+                      >
+                        {item.label}
+                      </Link>
+                      <div className="mt-3 grid gap-2">
+                        {item.columns.flatMap((column) =>
+                          column.slice(1).map((link) => (
+                            <Link
+                              key={`${item.label}-${link}`}
+                              href={menuSourceHref(link)}
+                              onClick={() => setMobileOpen(false)}
+                              className="rounded-2xl px-4 py-2 text-sm font-medium text-emerald-900/70 hover:bg-emerald-50 dark:text-white/70 dark:hover:bg-white/10"
+                            >
+                              {link}
+                            </Link>
+                          )),
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileOpen(false)}
+                    className="block rounded-2xl bg-emerald-800 px-4 py-3 text-center font-semibold text-white"
+                  >
+                    Citizen Login
+                  </Link>
+                </div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>

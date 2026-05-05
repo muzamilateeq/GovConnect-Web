@@ -7,24 +7,28 @@ import type { FilterCategory } from "@/lib/listings";
 
 export function JobsPageClient({
   initialCategory,
+  initialOfficialUrl,
+  initialLabel,
   initialSearch,
 }: {
   initialCategory: FilterCategory;
+  initialOfficialUrl: string;
+  initialLabel: string;
   initialSearch: string;
 }) {
   const [search, setSearch] = useState(initialSearch);
 
   return (
     <main className="min-h-screen bg-[#f8fbf8] text-emerald-950 dark:bg-[#03140d] dark:text-white">
-      <section className="px-5 pt-12 sm:px-8 lg:px-12">
-        <div className="mx-auto max-w-7xl rounded-[2rem] border border-emerald-900/10 bg-white/80 p-6 shadow-2xl shadow-emerald-950/10 backdrop-blur-xl dark:border-white/10 dark:bg-white/10 sm:p-8">
+      <section className="px-4 pt-8 sm:px-8 sm:pt-12 lg:px-12">
+        <div className="mx-auto max-w-7xl rounded-[1.75rem] border border-emerald-900/10 bg-white/80 p-5 shadow-2xl shadow-emerald-950/10 backdrop-blur-xl sm:rounded-[2rem] sm:p-8 dark:border-white/10 dark:bg-white/10">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700 dark:text-emerald-300">
             Official Direct Apply
           </p>
-          <h1 className="mt-3 text-4xl font-semibold tracking-normal sm:text-5xl">
-            Search Pakistan government services
+          <h1 className="mt-3 text-3xl font-semibold tracking-normal sm:text-5xl">
+            {initialSearch ? initialLabel : "Search Pakistan government services"}
           </h1>
-          <p className="mt-4 max-w-2xl text-base leading-7 text-emerald-900/65 dark:text-white/65">
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-emerald-900/65 sm:text-base dark:text-white/65">
             Search jobs, schemes, licenses, scholarships, tax services, and
             official records in real time. Apply opens the official government
             page in a new tab.
@@ -45,7 +49,9 @@ export function JobsPageClient({
 
       <ListingsEngine
         key={`${initialCategory}-${initialSearch}`}
+        officialUrl={initialOfficialUrl}
         search={search}
+        selectedLabel={initialLabel}
         initialCategory={initialCategory}
       />
     </main>

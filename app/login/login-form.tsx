@@ -45,7 +45,7 @@ export function LoginForm() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f8fbf8] px-5 py-8 text-emerald-950 dark:bg-[#03140d] dark:text-white sm:px-8 lg:px-12">
+    <main className="min-h-screen bg-[#f8fbf8] px-4 py-6 text-emerald-950 dark:bg-[#03140d] dark:text-white sm:px-8 sm:py-8 lg:px-12">
       <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl flex-col">
         <header className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
@@ -64,7 +64,7 @@ export function LoginForm() {
           <ThemeToggle />
         </header>
 
-        <section className="grid flex-1 items-center gap-10 py-12 lg:grid-cols-[1fr_460px]">
+        <section className="grid flex-1 items-center gap-8 py-8 sm:py-12 lg:grid-cols-[1fr_460px] lg:gap-10">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
@@ -89,7 +89,7 @@ export function LoginForm() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.05 }}
             onSubmit={handleLogin}
-            className="rounded-[2rem] border border-emerald-900/10 bg-white/80 p-6 shadow-2xl shadow-emerald-950/10 backdrop-blur-xl dark:border-white/10 dark:bg-white/10 sm:p-8"
+            className="rounded-[1.75rem] border border-emerald-900/10 bg-white/80 p-5 shadow-2xl shadow-emerald-950/10 backdrop-blur-xl sm:rounded-[2rem] sm:p-8 dark:border-white/10 dark:bg-white/10"
           >
             <h2 className="text-3xl font-semibold">Login</h2>
             <p className="mt-2 text-sm leading-6 text-emerald-900/60 dark:text-white/60">

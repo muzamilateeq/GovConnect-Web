@@ -36,8 +36,31 @@ function matchesDeadline(date: string, filter: DeadlineFilter) {
     : date >= start && date <= end;
 }
 
+function getSearchTokens(search: string) {
+  const genericWords = new Set([
+    "job",
+    "jobs",
+    "scheme",
+    "schemes",
+    "service",
+    "services",
+    "portal",
+    "apply",
+    "official",
+  ]);
+
+  const tokens = search
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, " ")
+    .split(/\s+/)
+    .map((token) => token.trim())
+    .filter((token) => token.length > 1 && !genericWords.has(token));
+
+  return tokens.length > 0 ? tokens : [search.trim().toLowerCase()];
+}
+
 function searchMockListings(filters: ListingFilters) {
-  const term = filters.search.trim().toLowerCase();
+  const tokens = getSearchTokens(filters.search);
 
   return mockListings
     .filter((listing) => listing.is_published)
@@ -46,9 +69,9 @@ function searchMockListings(filters: ListingFilters) {
         filters.category === "All" || listing.category === filters.category,
     )
     .filter((listing) => {
-      if (!term) return true;
+      if (!filters.search.trim()) return true;
 
-      return [
+      const haystack = [
         listing.title,
         listing.organization,
         listing.source_key ?? "",
@@ -58,8 +81,9 @@ function searchMockListings(filters: ListingFilters) {
         listing.summary,
       ]
         .join(" ")
-        .toLowerCase()
-        .includes(term);
+        .toLowerCase();
+
+      return tokens.some((token) => haystack.includes(token));
     })
     .filter(
       (listing) =>
@@ -104,17 +128,23 @@ export async function fetchListings(filters: ListingFilters) {
   }
 
   if (filters.search.trim()) {
-    const term = filters.search.trim().replaceAll(",", " ");
+    const tokens = getSearchTokens(filters.search);
+    const fields = [
+      "title",
+      "organization",
+      "source_key",
+      "source_name",
+      "summary",
+      "city",
+      "province",
+    ];
+
     query = query.or(
-      [
-        `title.ilike.%${term}%`,
-        `organization.ilike.%${term}%`,
-        `source_key.ilike.%${term}%`,
-        `source_name.ilike.%${term}%`,
-        `summary.ilike.%${term}%`,
-        `city.ilike.%${term}%`,
-        `province.ilike.%${term}%`,
-      ].join(","),
+      tokens
+        .flatMap((token) =>
+          fields.map((field) => `${field}.ilike.%${token.replaceAll(",", " ")}%`),
+        )
+        .join(","),
     );
   }
 

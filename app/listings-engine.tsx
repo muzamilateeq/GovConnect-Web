@@ -35,11 +35,15 @@ const deadlineOptions: { label: string; value: DeadlineFilter }[] = [
 ];
 
 export function ListingsEngine({
+  officialUrl = "",
   search,
   initialCategory = "All",
+  selectedLabel = "",
 }: {
+  officialUrl?: string;
   search: string;
   initialCategory?: FilterCategory;
+  selectedLabel?: string;
 }) {
   const [filters, setFilters] = useState<ListingFilters>({
     ...defaultFilters,
@@ -89,18 +93,18 @@ export function ListingsEngine({
   const listings = listingsQuery.data ?? [];
 
   return (
-    <section className="px-5 py-16 sm:px-8 lg:px-12" id="listings">
+    <section className="px-4 py-12 sm:px-8 sm:py-16 lg:px-12" id="listings">
       <div className="mx-auto max-w-7xl">
-        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+        <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700 dark:text-emerald-300">
               Live Data Engine
             </p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-normal sm:text-4xl">
+              <h2 className="mt-3 text-2xl font-semibold tracking-normal sm:text-4xl">
               Filter jobs, schemes, and results in real time
             </h2>
           </div>
-          <div className="flex rounded-full border border-emerald-900/10 bg-white/70 p-1 shadow-lg shadow-emerald-950/5 backdrop-blur dark:border-white/10 dark:bg-white/10">
+          <div className="flex max-w-full overflow-x-auto rounded-full border border-emerald-900/10 bg-white/70 p-1 shadow-lg shadow-emerald-950/5 backdrop-blur dark:border-white/10 dark:bg-white/10">
             {categoryNames.map((tab) => (
               <button
                 key={tab}
@@ -112,7 +116,7 @@ export function ListingsEngine({
                       tab === "Latest Jobs" ? current.salary : defaultFilters.salary,
                   }))
                 }
-                className="relative rounded-full px-4 py-2.5 text-sm font-semibold text-emerald-900/65 transition dark:text-white/65"
+                className="relative shrink-0 rounded-full px-4 py-2.5 text-sm font-semibold text-emerald-900/65 transition dark:text-white/65"
               >
                 {filters.category === tab && (
                   <motion.span
@@ -135,11 +139,11 @@ export function ListingsEngine({
           </div>
         </div>
 
-        <div className="mt-8 grid gap-6 lg:grid-cols-[320px_1fr]">
+        <div className="mt-8 grid gap-5 lg:grid-cols-[320px_1fr] lg:gap-6">
           <FilterSidebar filters={filters} setFilters={setFilters} />
 
           <div className="min-h-[420px]">
-            <div className="mb-4 flex items-center justify-between rounded-[1.5rem] border border-emerald-900/10 bg-white/70 px-5 py-4 shadow-lg shadow-emerald-950/5 backdrop-blur dark:border-white/10 dark:bg-white/10">
+            <div className="mb-4 flex items-center justify-between rounded-[1.5rem] border border-emerald-900/10 bg-white/70 px-4 py-4 shadow-lg shadow-emerald-950/5 backdrop-blur sm:px-5 dark:border-white/10 dark:bg-white/10">
               <div className="flex items-center gap-2 text-sm font-semibold text-emerald-800 dark:text-emerald-200">
                 <Radio className="h-4 w-4" />
                 {isSupabaseConfigured
@@ -163,7 +167,7 @@ export function ListingsEngine({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -18 }}
                   transition={{ duration: 0.28 }}
-                  className="grid gap-5 md:grid-cols-2"
+                  className="grid gap-4 md:grid-cols-2 md:gap-5"
                 >
                   {listings.map((listing, index) => (
                     <ListingCard
@@ -177,12 +181,24 @@ export function ListingsEngine({
             )}
 
             {!listingsQuery.isLoading && listings.length === 0 && (
-              <div className="rounded-[1.75rem] border border-emerald-900/10 bg-white/75 p-8 text-center shadow-xl shadow-emerald-950/7 backdrop-blur-xl dark:border-white/10 dark:bg-white/10">
-                <h3 className="text-xl font-semibold">No listings found</h3>
+              <div className="rounded-[1.75rem] border border-emerald-900/10 bg-white/75 p-6 text-center shadow-xl shadow-emerald-950/7 backdrop-blur-xl sm:p-8 dark:border-white/10 dark:bg-white/10">
+                <h3 className="text-xl font-semibold">
+                  No current {selectedLabel || search || "records"} found
+                </h3>
                 <p className="mt-2 text-sm text-emerald-900/65 dark:text-white/65">
-                  Try widening filters, or run the scraper so official government
-                  jobs and schemes are imported into Supabase.
+                  We could not find a matching scraped record in Supabase yet.
+                  Check the official website for the latest notice.
                 </p>
+                {officialUrl && (
+                  <a
+                    href={officialUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-5 inline-flex rounded-full bg-emerald-800 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/15 transition hover:bg-emerald-900"
+                  >
+                    See {selectedLabel || "official"} website
+                  </a>
+                )}
               </div>
             )}
           </div>
@@ -222,7 +238,7 @@ function FilterSidebar({
   setFilters: Dispatch<SetStateAction<ListingFilters>>;
 }) {
   return (
-    <aside className="h-fit rounded-[1.75rem] border border-emerald-900/10 bg-white/75 p-5 shadow-xl shadow-emerald-950/7 backdrop-blur-xl dark:border-white/10 dark:bg-white/10">
+    <aside className="h-fit rounded-[1.75rem] border border-emerald-900/10 bg-white/75 p-4 shadow-xl shadow-emerald-950/7 backdrop-blur-xl sm:p-5 dark:border-white/10 dark:bg-white/10">
       <div className="mb-6 flex items-center justify-between">
         <h3 className="flex items-center gap-2 text-lg font-semibold">
           <SlidersHorizontal className="h-5 w-5" />

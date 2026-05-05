@@ -225,16 +225,16 @@ export function AdminCommandCenter() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f8fbf8] px-5 py-8 text-emerald-950 dark:bg-[#03140d] dark:text-white sm:px-8 lg:px-12">
+    <main className="min-h-screen bg-[#f8fbf8] px-4 py-6 text-emerald-950 dark:bg-[#03140d] dark:text-white sm:px-8 sm:py-8 lg:px-12">
       <div className="mx-auto max-w-7xl">
-        <header className="rounded-[2rem] border border-emerald-900/10 bg-white/80 p-6 shadow-2xl shadow-emerald-950/10 backdrop-blur-xl dark:border-white/10 dark:bg-white/10">
+        <header className="rounded-[1.75rem] border border-emerald-900/10 bg-white/80 p-5 shadow-2xl shadow-emerald-950/10 backdrop-blur-xl sm:rounded-[2rem] sm:p-6 dark:border-white/10 dark:bg-white/10">
           <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
             <div>
               <span className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-800 dark:bg-emerald-400/15 dark:text-emerald-100">
                 <ShieldCheck className="h-4 w-4" />
                 Protected Admin Route
               </span>
-              <h1 className="mt-5 text-4xl font-semibold tracking-normal sm:text-5xl">
+              <h1 className="mt-5 text-3xl font-semibold tracking-normal sm:text-5xl">
                 Admin Command Center
               </h1>
               <p className="mt-4 max-w-3xl text-base leading-7 text-emerald-900/65 dark:text-white/65">
@@ -243,7 +243,7 @@ export function AdminCommandCenter() {
                 console.
               </p>
             </div>
-            <div className="rounded-[1.5rem] bg-emerald-950 p-5 text-white shadow-xl shadow-emerald-950/15">
+            <div className="rounded-[1.5rem] bg-emerald-950 p-4 text-white shadow-xl shadow-emerald-950/15 sm:p-5">
               <p className="text-sm text-emerald-100/70">Session status</p>
               <p className="mt-2 text-2xl font-semibold">Supabase Protected</p>
             </div>
@@ -358,7 +358,7 @@ function ScraperLogPanel({
             {scraperStatus}
           </p>
         </div>
-        <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
           <button
             onClick={refresh}
             className="inline-flex items-center gap-2 rounded-2xl bg-emerald-100 px-4 py-3 text-sm font-semibold text-emerald-800 dark:bg-white/10 dark:text-white"
@@ -430,7 +430,7 @@ function MetricCard({
     <motion.article
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-[1.75rem] border border-emerald-900/10 bg-white/75 p-6 shadow-xl shadow-emerald-950/7 backdrop-blur-xl dark:border-white/10 dark:bg-white/10"
+      className="rounded-[1.75rem] border border-emerald-900/10 bg-white/75 p-5 shadow-xl shadow-emerald-950/7 backdrop-blur-xl sm:p-6 dark:border-white/10 dark:bg-white/10"
     >
       <div className="flex h-13 w-13 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-800 dark:bg-emerald-400/15 dark:text-emerald-200">
         {icon}
@@ -438,7 +438,7 @@ function MetricCard({
       <p className="mt-6 text-sm font-semibold text-emerald-900/55 dark:text-white/55">
         {label}
       </p>
-      <p className="mt-2 text-4xl font-semibold">{value}</p>
+      <p className="mt-2 text-3xl font-semibold sm:text-4xl">{value}</p>
     </motion.article>
   );
 }
@@ -459,8 +459,8 @@ function SmartForm({
   setStep: (step: number) => void;
 }) {
   return (
-    <section className="rounded-[1.75rem] border border-emerald-900/10 bg-white/75 p-6 shadow-xl shadow-emerald-950/7 backdrop-blur-xl dark:border-white/10 dark:bg-white/10">
-      <div className="flex items-center justify-between gap-4">
+    <section className="rounded-[1.75rem] border border-emerald-900/10 bg-white/75 p-5 shadow-xl shadow-emerald-950/7 backdrop-blur-xl sm:p-6 dark:border-white/10 dark:bg-white/10">
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <h2 className="flex items-center gap-2 text-2xl font-semibold">
             <ClipboardList className="h-6 w-6" />
@@ -491,7 +491,7 @@ function SmartForm({
         {step === 1 && (
           <div>
             <label className="text-sm font-semibold">Scrape Link</label>
-            <div className="mt-2 flex gap-3">
+            <div className="mt-2 grid gap-3 sm:flex">
               <div className="flex min-w-0 flex-1 items-center gap-2 rounded-2xl border border-emerald-900/10 bg-emerald-50 px-4 dark:border-white/10 dark:bg-white/10">
                 <LinkIcon className="h-4 w-4 shrink-0 text-emerald-700" />
                 <input
@@ -508,7 +508,7 @@ function SmartForm({
               </div>
               <button
                 onClick={simulateScrape}
-                className="inline-flex h-12 items-center gap-2 rounded-2xl bg-emerald-800 px-5 text-sm font-semibold text-white"
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-emerald-800 px-5 text-sm font-semibold text-white"
               >
                 {scraping ? (
                   <Loader2 className="h-4 w-4 animate-spin" />

@@ -12,6 +12,8 @@ type Props = {
   searchParams: Promise<{
     search?: string;
     category?: string;
+    official?: string;
+    label?: string;
   }>;
 };
 
@@ -27,6 +29,8 @@ export default async function JobsPage({ searchParams }: Props) {
   return (
     <JobsPageClient
       initialCategory={getCategoryParam(params.category)}
+      initialOfficialUrl={params.official ?? ""}
+      initialLabel={params.label ?? params.search ?? "Official Records"}
       initialSearch={params.search ?? ""}
     />
   );
