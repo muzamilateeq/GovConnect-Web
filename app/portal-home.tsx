@@ -16,9 +16,9 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { menuSourceHref } from "@/lib/menu-sources";
-import { ListingsEngine } from "./listings-engine";
 import { ThemeToggle } from "./theme-toggle";
 
 const navItems = [
@@ -60,6 +60,7 @@ const popularSearches = [
 ];
 
 export function PortalHome() {
+  const router = useRouter();
   const [megaOpen, setMegaOpen] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -76,11 +77,13 @@ export function PortalHome() {
     );
   }, [search]);
 
-  function showResults() {
-    document.getElementById("listings")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+  function openResults(nextSearch = search) {
+    const query = nextSearch.trim();
+    const path = query
+      ? `/jobs?search=${encodeURIComponent(query)}`
+      : "/jobs";
+
+    router.push(path);
   }
 
   return (
@@ -114,7 +117,11 @@ export function PortalHome() {
               desk.
             </p>
 
-            <motion.div
+            <motion.form
+              onSubmit={(event) => {
+                event.preventDefault();
+                openResults();
+              }}
               className="mt-9 max-w-2xl rounded-[2rem] border border-white/80 bg-white/75 p-3 shadow-2xl shadow-emerald-950/10 backdrop-blur-xl dark:border-white/10 dark:bg-white/10 dark:shadow-black/30"
               animate={{ y: [0, -4, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -129,7 +136,7 @@ export function PortalHome() {
                   className="h-12 min-w-0 flex-1 bg-transparent px-3 text-base font-medium outline-none placeholder:text-emerald-900/45 sm:h-14 sm:px-0 dark:placeholder:text-white/45"
                 />
                 <button
-                  onClick={showResults}
+                  type="submit"
                   className="inline-flex h-12 w-full shrink-0 items-center justify-center gap-2 rounded-full bg-emerald-700 px-5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20 transition hover:bg-emerald-800 sm:w-auto"
                 >
                   Search
@@ -147,8 +154,9 @@ export function PortalHome() {
                       exit={{ opacity: 0, y: -8 }}
                       onClick={() => {
                         setSearch(item);
-                        showResults();
+                        openResults(item);
                       }}
+                      type="button"
                       className="rounded-full border border-emerald-700/10 bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-800 transition hover:border-emerald-700/30 dark:border-white/10 dark:bg-white/10 dark:text-emerald-50"
                     >
                       {item}
@@ -156,7 +164,7 @@ export function PortalHome() {
                   ))}
                 </AnimatePresence>
               </div>
-            </motion.div>
+            </motion.form>
           </motion.div>
 
           <motion.div
@@ -199,8 +207,6 @@ export function PortalHome() {
           </motion.div>
         </div>
       </section>
-
-      <ListingsEngine search={search} />
     </main>
   );
 }

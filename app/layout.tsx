@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { BackButton } from "./back-button";
+import { Footer } from "./footer";
 import { Providers } from "./providers";
 import "./globals.css";
 
@@ -22,6 +23,7 @@ export default function RootLayout({
       <body className="min-h-full bg-white text-emerald-950">
         <Providers>
           {children}
+          <Footer />
           <BackButton />
         </Providers>
       </body>

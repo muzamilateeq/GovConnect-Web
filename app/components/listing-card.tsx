@@ -77,6 +77,7 @@ export function ListingCard({
       <div className="mt-6 flex flex-col gap-4 border-t border-emerald-900/10 pt-5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between dark:border-white/10">
         <span className="flex items-center gap-2 text-sm font-medium text-emerald-800 dark:text-emerald-200">
           <CalendarClock className="h-4 w-4" />
+          Apply by{" "}
           {new Intl.DateTimeFormat("en", {
             month: "short",
             day: "numeric",

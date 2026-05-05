@@ -27,6 +27,26 @@ function getDeadlineRange(filter: DeadlineFilter) {
   };
 }
 
+function getTodayDate() {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  return today.toISOString().slice(0, 10);
+}
+
+function hasOpenApplyPath(listing: Listing) {
+  return [
+    listing.apply_url,
+    listing.official_url,
+    listing.official_link,
+    listing.source_url,
+  ].some((url) => Boolean(url && url !== "#"));
+}
+
+function isCurrentListing(listing: Listing) {
+  return listing.apply_deadline >= getTodayDate() && hasOpenApplyPath(listing);
+}
+
 function matchesDeadline(date: string, filter: DeadlineFilter) {
   if (filter === "all") return true;
 
@@ -113,6 +133,7 @@ function matchesSearch(listing: Listing, search: string) {
 function searchMockListings(filters: ListingFilters) {
   return mockListings
     .filter((listing) => listing.is_published)
+    .filter(isCurrentListing)
     .filter(
       (listing) =>
         filters.category === "All" || listing.category === filters.category,
@@ -146,6 +167,7 @@ export async function fetchListings(filters: ListingFilters) {
     .from("listings")
     .select("*")
     .eq("is_published", true)
+    .gte("apply_deadline", getTodayDate())
     .lte("bps_min", filters.bps[1])
     .gte("bps_max", filters.bps[0])
     .order("apply_deadline", { ascending: true });
@@ -198,12 +220,16 @@ export async function fetchListings(filters: ListingFilters) {
     throw new Error(error.message);
   }
 
-  return data.filter((listing) => matchesSearch(listing, filters.search));
+  return data
+    .filter(isCurrentListing)
+    .filter((listing) => matchesSearch(listing, filters.search));
 }
 
 export const getListingBySlug = cache(async (slug: string) => {
   if (!isSupabaseConfigured || !supabase) {
-    return mockListings.find((listing) => listing.slug === slug) ?? null;
+    const listing = mockListings.find((item) => item.slug === slug);
+
+    return listing && isCurrentListing(listing) ? listing : null;
   }
 
   const { data, error } = await supabase
@@ -211,13 +237,14 @@ export const getListingBySlug = cache(async (slug: string) => {
     .select("*")
     .eq("slug", slug)
     .eq("is_published", true)
+    .gte("apply_deadline", getTodayDate())
     .maybeSingle<Listing>();
 
   if (error) {
     throw new Error(error.message);
   }
 
-  return data;
+  return data && isCurrentListing(data) ? data : null;
 });
 
 export const initialListingFilters = defaultFilters;
