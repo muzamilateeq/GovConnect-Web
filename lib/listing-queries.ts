@@ -48,6 +48,8 @@ function searchMockListings(filters: ListingFilters) {
       return [
         listing.title,
         listing.organization,
+        listing.source_key ?? "",
+        listing.source_name ?? "",
         listing.city,
         listing.province,
         listing.summary,
@@ -91,10 +93,18 @@ export async function fetchListings(filters: ListingFilters) {
     .order("apply_deadline", { ascending: true });
 
   if (filters.search.trim()) {
-    query = query.textSearch("search_vector", filters.search.trim(), {
-      type: "websearch",
-      config: "english",
-    });
+    const term = filters.search.trim().replaceAll(",", " ");
+    query = query.or(
+      [
+        `title.ilike.%${term}%`,
+        `organization.ilike.%${term}%`,
+        `source_key.ilike.%${term}%`,
+        `source_name.ilike.%${term}%`,
+        `summary.ilike.%${term}%`,
+        `city.ilike.%${term}%`,
+        `province.ilike.%${term}%`,
+      ].join(","),
+    );
   }
 
   if (filters.provinces.length > 0) {

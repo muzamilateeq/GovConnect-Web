@@ -3,16 +3,11 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  ArrowRight,
-  Building2,
-  CalendarClock,
   Check,
   Loader2,
-  MapPin,
   Radio,
   SlidersHorizontal,
 } from "lucide-react";
-import Link from "next/link";
 import {
   useEffect,
   useMemo,
@@ -31,6 +26,7 @@ import {
   provinces,
 } from "@/lib/listings";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
+import { ListingCard } from "./components/listing-card";
 
 const deadlineOptions: { label: string; value: DeadlineFilter }[] = [
   { label: "All", value: "all" },
@@ -372,89 +368,5 @@ function RangeFilter({
         />
       </div>
     </div>
-  );
-}
-
-function ListingCard({
-  listing,
-  index,
-}: {
-  listing: Listing;
-  index: number;
-}) {
-  const isScheme = listing.category === "New Schemes";
-
-  return (
-    <motion.article
-      initial={{ opacity: 0, y: 35 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.35 }}
-      transition={{ duration: 0.5, delay: index * 0.06 }}
-      className="group rounded-[1.75rem] border border-emerald-900/10 bg-white/75 p-6 shadow-xl shadow-emerald-950/7 backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-2xl dark:border-white/10 dark:bg-white/10"
-    >
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-13 w-13 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-800 dark:bg-emerald-400/15 dark:text-emerald-200">
-            <Building2 className="h-6 w-6" />
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-200">
-              {listing.organization}
-            </p>
-            <p className="mt-1 flex items-center gap-1 text-xs text-emerald-900/55 dark:text-white/55">
-              <MapPin className="h-3.5 w-3.5" />
-              {listing.city}, {listing.province}
-            </p>
-          </div>
-        </div>
-        <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800 dark:bg-white/10 dark:text-emerald-100">
-          {listing.category}
-        </span>
-      </div>
-
-      <h3 className="mt-6 text-xl font-semibold">{listing.title}</h3>
-      <p className="mt-3 text-sm leading-6 text-emerald-900/65 dark:text-white/65">
-        {listing.summary}
-      </p>
-
-      <div className="mt-6 grid grid-cols-2 gap-3 text-sm">
-        <div className="rounded-2xl bg-emerald-50 p-3 dark:bg-white/10">
-          <p className="text-xs font-medium text-emerald-900/55 dark:text-white/55">
-            {isScheme ? "Benefit" : "Salary"}
-          </p>
-          <p className="mt-1 font-semibold">
-            {isScheme
-              ? "Eligibility based"
-              : `PKR ${listing.salary_min.toLocaleString()} - ${listing.salary_max.toLocaleString()}`}
-          </p>
-        </div>
-        <div className="rounded-2xl bg-emerald-50 p-3 dark:bg-white/10">
-          <p className="text-xs font-medium text-emerald-900/55 dark:text-white/55">
-            Scale
-          </p>
-          <p className="mt-1 font-semibold">
-            BPS {listing.bps_min}-{listing.bps_max}
-          </p>
-        </div>
-      </div>
-
-      <div className="mt-6 flex items-center justify-between border-t border-emerald-900/10 pt-5 dark:border-white/10">
-        <span className="flex items-center gap-2 text-sm font-medium text-emerald-800 dark:text-emerald-200">
-          <CalendarClock className="h-4 w-4" />
-          {new Intl.DateTimeFormat("en", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          }).format(new Date(listing.apply_deadline))}
-        </span>
-        <Link
-          href={`/listings/${listing.slug}`}
-          className="inline-flex items-center gap-1 text-sm font-semibold text-emerald-800 dark:text-emerald-100"
-        >
-          View
-          <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
-        </Link>
-      </div>
-    </motion.article>
   );
 }

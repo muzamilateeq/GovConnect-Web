@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Building2, CalendarClock, MapPin } from "lucide-react";
 import type { ReactNode } from "react";
+import { ApplyNowButton } from "@/app/components/apply-now-button";
 import { getListingBySlug } from "@/lib/listing-queries";
 
 type Props = {
@@ -137,12 +138,7 @@ export default async function ListingPage({ params }: Props) {
             <p className="mt-4 text-base leading-8 text-emerald-900/70 dark:text-white/70">
               {listing.description}
             </p>
-            <a
-              href={listing.apply_url}
-              className="mt-8 inline-flex rounded-full bg-emerald-800 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20 transition hover:bg-emerald-900"
-            >
-              Apply now
-            </a>
+            <ApplyNowButton listing={listing} />
           </div>
         </section>
       </div>

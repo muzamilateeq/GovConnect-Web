@@ -41,6 +41,7 @@ create table if not exists public.listings (
   raw_hash text,
   update_type text,
   last_scraped_at timestamptz,
+  click_count integer not null default 0,
   is_published boolean not null default false,
   search_vector tsvector generated always as (
     setweight(to_tsvector('english', coalesce(title, '')), 'A') ||
@@ -53,6 +54,19 @@ create table if not exists public.listings (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.listings
+  add column if not exists official_url text,
+  add column if not exists source_key text,
+  add column if not exists source_name text,
+  add column if not exists source_url text,
+  add column if not exists source_image_url text,
+  add column if not exists ad_image_url text,
+  add column if not exists pdf_url text,
+  add column if not exists raw_hash text,
+  add column if not exists update_type text,
+  add column if not exists last_scraped_at timestamptz,
+  add column if not exists click_count integer not null default 0;
 
 create index if not exists listings_search_idx
   on public.listings using gin (search_vector);
@@ -160,6 +174,10 @@ insert into public.listings (
   summary,
   description,
   apply_url,
+  official_url,
+  source_key,
+  source_name,
+  click_count,
   is_published
 ) values
   (
@@ -177,7 +195,11 @@ insert into public.listings (
     '2026-05-28',
     'Verified public service roles with written test scheduling.',
     'Applications are open for Assistant Director positions across provincial departments. Candidates can review eligibility, syllabus, and document requirements before applying.',
-    '#',
+    'https://www.ppsc.gop.pk/',
+    'https://www.ppsc.gop.pk/',
+    'ppsc',
+    'PPSC',
+    0,
     true
   ),
   (
@@ -195,7 +217,11 @@ insert into public.listings (
     '2026-06-10',
     'Student verification and merit review are now live.',
     'Eligible students can submit records for digital verification and track phase-wise distribution status through the portal.',
-    '#',
+    'https://www.hec.gov.pk/',
+    'https://www.hec.gov.pk/',
+    'hec',
+    'HEC',
+    0,
     true
   ),
   (
@@ -213,7 +239,11 @@ insert into public.listings (
     '2026-05-07',
     'District merit panels and document scrutiny schedule published.',
     'Final panels for educator recruitment are available with district-level instructions for selected and waiting candidates.',
-    '#',
+    'https://schools.punjab.gov.pk/',
+    'https://schools.punjab.gov.pk/',
+    'punjab-education',
+    'School Education Department',
+    0,
     true
   )
 on conflict (slug) do update set
@@ -231,4 +261,7 @@ on conflict (slug) do update set
   summary = excluded.summary,
   description = excluded.description,
   apply_url = excluded.apply_url,
+  official_url = excluded.official_url,
+  source_key = excluded.source_key,
+  source_name = excluded.source_name,
   is_published = excluded.is_published;

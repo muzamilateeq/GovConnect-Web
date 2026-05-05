@@ -19,6 +19,12 @@ export type Listing = {
   summary: string;
   description: string;
   apply_url: string;
+  official_url?: string | null;
+  official_link?: string | null;
+  source_key?: string | null;
+  source_name?: string | null;
+  source_url?: string | null;
+  click_count?: number | null;
   is_published: boolean;
   created_at: string;
 };
@@ -73,7 +79,11 @@ export const mockListings: Listing[] = [
     summary: "Verified public service roles with written test scheduling.",
     description:
       "Applications are open for Assistant Director positions across provincial departments. Candidates can review eligibility, syllabus, and document requirements before applying.",
-    apply_url: "#",
+    apply_url: "https://www.ppsc.gop.pk/",
+    official_url: "https://www.ppsc.gop.pk/",
+    source_key: "ppsc",
+    source_name: "PPSC",
+    click_count: 0,
     is_published: true,
     created_at: "2026-05-05T00:00:00.000Z",
   },
@@ -95,6 +105,10 @@ export const mockListings: Listing[] = [
     description:
       "Eligible students can submit records for digital verification and track phase-wise distribution status through the portal.",
     apply_url: "#",
+    official_url: "https://www.hec.gov.pk/",
+    source_key: "hec",
+    source_name: "HEC",
+    click_count: 0,
     is_published: true,
     created_at: "2026-05-05T00:00:00.000Z",
   },
@@ -116,6 +130,10 @@ export const mockListings: Listing[] = [
     description:
       "Final panels for educator recruitment are available with district-level instructions for selected and waiting candidates.",
     apply_url: "#",
+    official_url: "https://schools.punjab.gov.pk/",
+    source_key: "punjab-education",
+    source_name: "School Education Department",
+    click_count: 0,
     is_published: true,
     created_at: "2026-05-05T00:00:00.000Z",
   },
@@ -137,6 +155,10 @@ export const mockListings: Listing[] = [
     description:
       "A competitive fellowship for young professionals to work on digital government products, analytics, and field deployment.",
     apply_url: "#",
+    official_url: "https://www.fpsc.gov.pk/jobs/gr/current-jobs",
+    source_key: "fpsc",
+    source_name: "FPSC",
+    click_count: 0,
     is_published: true,
     created_at: "2026-05-05T00:00:00.000Z",
   },
@@ -158,6 +180,10 @@ export const mockListings: Listing[] = [
     description:
       "Applicants can verify household eligibility, review required documents, and monitor balloting outcomes in real time.",
     apply_url: "#",
+    official_url: "https://energy.punjab.gov.pk/",
+    source_key: "energy",
+    source_name: "Energy Department",
+    click_count: 0,
     is_published: true,
     created_at: "2026-05-05T00:00:00.000Z",
   },

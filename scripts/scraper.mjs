@@ -347,6 +347,7 @@ async function upsertRecord(supabase, record) {
     raw_hash: record.raw_hash,
     update_type: record.update_type,
     last_scraped_at: new Date().toISOString(),
+    click_count: existing?.id ? undefined : 0,
     is_published: true,
   };
 
