@@ -1,13 +1,18 @@
 "use client";
 
 import { Search } from "lucide-react";
-import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { ListingsEngine } from "@/app/listings-engine";
+import type { FilterCategory } from "@/lib/listings";
 
-export function JobsPageClient() {
-  const searchParams = useSearchParams();
-  const [search, setSearch] = useState(searchParams.get("search") ?? "");
+export function JobsPageClient({
+  initialCategory,
+  initialSearch,
+}: {
+  initialCategory: FilterCategory;
+  initialSearch: string;
+}) {
+  const [search, setSearch] = useState(initialSearch);
 
   return (
     <main className="min-h-screen bg-[#f8fbf8] text-emerald-950 dark:bg-[#03140d] dark:text-white">
@@ -17,11 +22,12 @@ export function JobsPageClient() {
             Official Direct Apply
           </p>
           <h1 className="mt-3 text-4xl font-semibold tracking-normal sm:text-5xl">
-            Search Pakistan government jobs
+            Search Pakistan government services
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-emerald-900/65 dark:text-white/65">
-            Search FPSC, PPSC, SPSC, BPSC, KPPSC, forces, and scheme records in
-            real time. Apply opens the official government page in a new tab.
+            Search jobs, schemes, licenses, scholarships, tax services, and
+            official records in real time. Apply opens the official government
+            page in a new tab.
           </p>
 
           <div className="mt-7 flex max-w-2xl items-center gap-3 rounded-[1.5rem] border border-emerald-900/10 bg-emerald-50 px-4 shadow-inner dark:border-white/10 dark:bg-white/10">
@@ -30,14 +36,18 @@ export function JobsPageClient() {
               aria-label="Search jobs"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search FPSC, PPSC, Laptop Scheme..."
+              placeholder="Search FPSC, Police Jobs, Kissan Card, Driving License..."
               className="h-14 min-w-0 flex-1 bg-transparent text-base font-medium outline-none placeholder:text-emerald-900/45 dark:placeholder:text-white/45"
             />
           </div>
         </div>
       </section>
 
-      <ListingsEngine search={search} />
+      <ListingsEngine
+        key={`${initialCategory}-${initialSearch}`}
+        search={search}
+        initialCategory={initialCategory}
+      />
     </main>
   );
 }

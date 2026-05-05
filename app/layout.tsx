@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BackButton } from "./back-button";
 import { Providers } from "./providers";
 import "./globals.css";
 
@@ -19,7 +20,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased" suppressHydrationWarning>
       <body className="min-h-full bg-white text-emerald-950">
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <BackButton />
+        </Providers>
       </body>
     </html>
   );

@@ -7,8 +7,8 @@ const supabaseAnonKey =
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 export async function protectDashboard(request: NextRequest) {
-  const loginUrl = new URL("/", request.url);
-  loginUrl.searchParams.set("admin", "locked");
+  const loginUrl = new URL("/login", request.url);
+  loginUrl.searchParams.set("next", request.nextUrl.pathname);
 
   if (!supabaseUrl || !supabaseAnonKey) {
     return NextResponse.redirect(loginUrl);

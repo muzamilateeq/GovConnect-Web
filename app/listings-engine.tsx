@@ -34,8 +34,17 @@ const deadlineOptions: { label: string; value: DeadlineFilter }[] = [
   { label: "Closing This Week", value: "week" },
 ];
 
-export function ListingsEngine({ search }: { search: string }) {
-  const [filters, setFilters] = useState<ListingFilters>(defaultFilters);
+export function ListingsEngine({
+  search,
+  initialCategory = "All",
+}: {
+  search: string;
+  initialCategory?: FilterCategory;
+}) {
+  const [filters, setFilters] = useState<ListingFilters>({
+    ...defaultFilters,
+    category: initialCategory,
+  });
   const [toast, setToast] = useState<Listing | null>(null);
   const queryClient = useQueryClient();
 

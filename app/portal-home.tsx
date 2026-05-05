@@ -11,18 +11,17 @@ import {
   Bell,
   ChevronDown,
   Landmark,
-  Moon,
   Search,
-  Sun,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { ListingsEngine } from "./listings-engine";
+import { ThemeToggle } from "./theme-toggle";
 
 const navItems = [
   {
     label: "Services",
-    href: "/#listings",
+    href: listingHref("services", "All"),
     columns: [
       ["Citizen Services", "Domicile", "Driving License", "Land Records"],
       ["Business", "Tax Portal", "Registrations", "Permits"],
@@ -31,7 +30,7 @@ const navItems = [
   },
   {
     label: "Jobs",
-    href: "/jobs",
+    href: listingHref("jobs", "Latest Jobs"),
     columns: [
       ["Recruitment", "PPSC Jobs", "Police Jobs", "Teaching Posts"],
       ["Support", "Eligibility", "Syllabus", "Interview Schedule"],
@@ -40,7 +39,7 @@ const navItems = [
   },
   {
     label: "Schemes",
-    href: "/#listings",
+    href: listingHref("schemes", "New Schemes"),
     columns: [
       ["Welfare", "Health Card", "Subsidies", "Youth Finance"],
       ["Digital", "Laptop Scheme 2026", "E-Services", "Training"],
@@ -57,18 +56,35 @@ const popularSearches = [
   "Police Recruitment",
 ];
 
+function listingHref(search: string, category = "All") {
+  return `/jobs?search=${encodeURIComponent(search)}&category=${encodeURIComponent(
+    category,
+  )}`;
+}
+
+function categoryForMenu(label: string | null, link: string) {
+  if (["result", "merit", "selection"].some((term) => link.toLowerCase().includes(term))) {
+    return "Recent Results";
+  }
+  if (label === "Jobs" || link.toLowerCase().includes("job")) return "Latest Jobs";
+  if (
+    label === "Schemes" ||
+    ["scholarship", "scheme", "card", "subsid", "training", "solar"].some(
+      (term) => link.toLowerCase().includes(term),
+    )
+  ) {
+    return "New Schemes";
+  }
+  return "All";
+}
+
 export function PortalHome() {
-  const [darkMode, setDarkMode] = useState(false);
   const [megaOpen, setMegaOpen] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [scrolled, setScrolled] = useState(false);
   const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", (latest) => setScrolled(latest > 12));
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-  }, [darkMode]);
 
   const suggestions = useMemo(() => {
     if (!search.trim()) return popularSearches.slice(0, 3);
@@ -88,10 +104,8 @@ export function PortalHome() {
   return (
     <main className="min-h-screen overflow-hidden bg-[#f8fbf8] text-emerald-950 transition-colors duration-300 dark:bg-[#03140d] dark:text-white">
       <Navbar
-        darkMode={darkMode}
         megaOpen={megaOpen}
         scrolled={scrolled}
-        setDarkMode={setDarkMode}
         setMegaOpen={setMegaOpen}
       />
 
@@ -208,16 +222,12 @@ export function PortalHome() {
 }
 
 function Navbar({
-  darkMode,
   megaOpen,
   scrolled,
-  setDarkMode,
   setMegaOpen,
 }: {
-  darkMode: boolean;
   megaOpen: string | null;
   scrolled: boolean;
-  setDarkMode: (value: boolean) => void;
   setMegaOpen: (value: string | null) => void;
 }) {
   return (
@@ -264,15 +274,9 @@ function Navbar({
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              aria-label="Toggle dark mode"
-              onClick={() => setDarkMode(!darkMode)}
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-emerald-900/10 bg-white/70 text-emerald-800 shadow-sm transition hover:bg-emerald-50 dark:border-white/10 dark:bg-white/10 dark:text-emerald-100"
-            >
-              {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </button>
+            <ThemeToggle />
             <Link
-              href="/dashboard"
+              href="/login"
               className="hidden rounded-full bg-emerald-800 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20 transition hover:bg-emerald-900 sm:inline-flex"
             >
               Citizen Login
@@ -300,11 +304,7 @@ function Navbar({
                         {column.slice(1).map((link) => (
                           <Link
                             key={link}
-                            href={
-                              megaOpen === "Jobs"
-                                ? `/jobs?search=${encodeURIComponent(link)}`
-                                : `/#listings`
-                            }
+                            href={listingHref(link, categoryForMenu(megaOpen, link))}
                             className="block rounded-2xl px-3 py-2 text-sm font-medium text-emerald-900/65 transition hover:bg-emerald-50 hover:text-emerald-950 dark:text-white/65 dark:hover:bg-white/10 dark:hover:text-white"
                           >
                             {link}
