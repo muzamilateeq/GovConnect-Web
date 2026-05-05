@@ -37,6 +37,27 @@ function matchesDeadline(date: string, filter: DeadlineFilter) {
 }
 
 function getSearchTokens(search: string) {
+  const synonyms: Record<string, string> = {
+    leptop: "laptop",
+    labtop: "laptop",
+    laaptop: "laptop",
+    laptope: "laptop",
+    scheem: "scheme",
+    screem: "scheme",
+    sceem: "scheme",
+    sceme: "scheme",
+    skim: "scheme",
+    skeme: "scheme",
+    scolarship: "scholarship",
+    scholership: "scholarship",
+    licens: "license",
+    licence: "license",
+    polices: "police",
+    kassan: "kissan",
+    kisan: "kissan",
+    kissan: "kissan",
+    cark: "card",
+  };
   const genericWords = new Set([
     "job",
     "jobs",
@@ -54,37 +75,49 @@ function getSearchTokens(search: string) {
     .replace(/[^a-z0-9\s]/g, " ")
     .split(/\s+/)
     .map((token) => token.trim())
+    .map((token) => synonyms[token] ?? token)
     .filter((token) => token.length > 1 && !genericWords.has(token));
 
-  return tokens.length > 0 ? tokens : [search.trim().toLowerCase()];
+  const uniqueTokens = [...new Set(tokens)];
+
+  return uniqueTokens.length > 0 ? uniqueTokens : [search.trim().toLowerCase()];
+}
+
+function listingSearchHaystack(listing: Listing) {
+  return [
+    listing.title,
+    listing.organization,
+    listing.source_key ?? "",
+    listing.source_name ?? "",
+    listing.city,
+    listing.province,
+    listing.summary,
+    listing.description,
+    listing.official_url ?? "",
+    listing.official_link ?? "",
+    listing.apply_url ?? "",
+  ]
+    .join(" ")
+    .toLowerCase();
+}
+
+function matchesSearch(listing: Listing, search: string) {
+  if (!search.trim()) return true;
+
+  const haystack = listingSearchHaystack(listing);
+  const tokens = getSearchTokens(search);
+
+  return tokens.every((token) => haystack.includes(token));
 }
 
 function searchMockListings(filters: ListingFilters) {
-  const tokens = getSearchTokens(filters.search);
-
   return mockListings
     .filter((listing) => listing.is_published)
     .filter(
       (listing) =>
         filters.category === "All" || listing.category === filters.category,
     )
-    .filter((listing) => {
-      if (!filters.search.trim()) return true;
-
-      const haystack = [
-        listing.title,
-        listing.organization,
-        listing.source_key ?? "",
-        listing.source_name ?? "",
-        listing.city,
-        listing.province,
-        listing.summary,
-      ]
-        .join(" ")
-        .toLowerCase();
-
-      return tokens.some((token) => haystack.includes(token));
-    })
+    .filter((listing) => matchesSearch(listing, filters.search))
     .filter(
       (listing) =>
         filters.category !== "Latest Jobs" ||
@@ -129,23 +162,21 @@ export async function fetchListings(filters: ListingFilters) {
 
   if (filters.search.trim()) {
     const tokens = getSearchTokens(filters.search);
-    const fields = [
-      "title",
-      "organization",
-      "source_key",
-      "source_name",
-      "summary",
-      "city",
-      "province",
-    ];
-
-    query = query.or(
-      tokens
-        .flatMap((token) =>
-          fields.map((field) => `${field}.ilike.%${token.replaceAll(",", " ")}%`),
-        )
-        .join(","),
-    );
+    tokens.forEach((token) => {
+      const safeToken = token.replace(/[%_,]/g, " ");
+      query = query.or(
+        [
+          `title.ilike.%${safeToken}%`,
+          `organization.ilike.%${safeToken}%`,
+          `source_key.ilike.%${safeToken}%`,
+          `source_name.ilike.%${safeToken}%`,
+          `summary.ilike.%${safeToken}%`,
+          `description.ilike.%${safeToken}%`,
+          `city.ilike.%${safeToken}%`,
+          `province.ilike.%${safeToken}%`,
+        ].join(","),
+      );
+    });
   }
 
   if (filters.provinces.length > 0) {
@@ -167,7 +198,7 @@ export async function fetchListings(filters: ListingFilters) {
     throw new Error(error.message);
   }
 
-  return data;
+  return data.filter((listing) => matchesSearch(listing, filters.search));
 }
 
 export const getListingBySlug = cache(async (slug: string) => {
